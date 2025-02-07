@@ -1,0 +1,154 @@
+/*****----- Configuration -----*****/
+configuration {
+    show-icons:                 false;
+    font:			"Iosevka Nerd Font 20";
+}
+
+@theme "/dev/null"
+
+* {
+        bg:                             #151515;
+        fg:                             #e8e8d3;
+        accent:                         #687363;
+        button:                         #1c1c1c;
+
+        background-color:               @bg;
+        text-color:                     @fg;
+}
+
+
+
+/*****----- Main Window -----*****/
+window {
+    /* properties for window widget */
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  false;
+    width:                       500px;
+    x-offset:                    0px;
+    y-offset:                    0px;
+
+    /* properties for all widgets */
+    enabled:                     true;
+    margin:                      0px;
+    padding:                     0px;
+    border:                      0px solid;
+    cursor:                      "default";
+    background-color:            @bg;
+}
+
+mainbox {
+	enabled: 			true;
+        children:                       [ "inputbar", "message", "listview" ];
+        spacing:                        2%;
+        padding:                        2% 1% 2% 1%;
+}
+
+inputbar {
+	enabled:			true;
+        children:                       ["textbox-prompt-colon" , "entry" ];
+        background-color:               @button;
+        expand:                         false;
+        border-radius:                  6px;
+        margin:                         0%;
+        padding:                        10px;
+}    
+
+textbox-prompt-colon {
+    enabled:                     true;
+    padding:                     8px 11.5px;
+    border-radius:               10;
+    expand:                      false;
+    str:                         "󰂯";
+    background-color:            @bg;
+    text-color:                  @fg;
+}
+
+
+entry {
+        placeholder:                    "Search";
+        background-color:               @button;
+        placeholder-color:              @fg;
+        expand:                         true;
+        padding:                        0.15% 0% 0% 0%;
+	cursor:                         text;
+   	placeholder:                   "";
+}
+
+
+
+/*****----- Message -----*****/
+message {
+    enabled:                     true;
+    margin:                      0px;
+    padding:                     15px;
+    border:                      0px solid;
+    border-radius:               10;
+    border-color:                @fg;
+    background-color:            @bg;
+    text-color:                  @button;
+}
+textbox {
+    background-color:            inherit;
+    text-color:                  inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+    placeholder-color:           @fg;
+    blink:                       true;
+    markup:                      true;
+}
+error-message {
+    padding:                     12px;
+    border:                      0px solid;
+    border-radius:               0px;
+    border-color:                @button;
+    background-color:            @bg;
+    text-color:                  @fg;
+}
+
+/*****----- Listview -----*****/
+listview {
+    enabled:                     true;
+    columns:                     1;
+    lines:                       4;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    reverse:                     false;
+    fixed-height:                true;
+    fixed-columns:               true;
+
+    spacing:                     5px;
+    margin:                      0px;
+    padding:                     0px;
+    border:                      0px solid;
+    border-radius:               0px;
+    border-color:                @button;
+    background-color:            transparent;
+    text-color:                  @fg;
+    cursor:                      "default";
+}
+
+/*****----- Elements -----*****/
+element {
+    enabled:                     true;
+    spacing:                     0px;
+    margin:                      0px;
+    padding:                     12px;
+    background-color:            transparent;
+    text-color:                  @fg;
+    cursor:                      pointer;
+}
+element-text {
+    background-color:            transparent;
+    text-color:                  inherit;
+    cursor:                      inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+}
+element selected.normal {
+    background-color:            @button;
+    text-color:                  @fg;
+}
