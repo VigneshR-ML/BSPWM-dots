@@ -1,0 +1,58 @@
+configuration {
+      font:                           "Iosevka Nerd Font 20";
+      show-icons:                     false;
+}
+
+@theme "/dev/null"
+
+* {
+        bg:                             #151515;
+        fg:                             #e8e8d3;
+        accent:                         #687363;
+        button:                         #1c1c1c;
+
+        background-color:               @bg;
+        text-color:                     @fg;
+}
+
+window {
+        border-radius:                  7px;
+        width:                          20%;
+        padding:                        22px;
+}
+
+listview {
+        columns:                        5;
+        lines:                          2;
+        cycle:                          true;
+        dynamic:                        true;
+        layout:                         vertical;
+	scrollbar:                   true;
+}
+
+mainbox {
+        children:                       [ listview ];
+        spacing:                        2%;
+        padding:                        2% 1% 2% 1%;
+}
+
+element {
+        orientation:                    vertical;
+        padding:                        2% 0% 2% 0%;
+}
+element-text {
+        expand:                         true;
+        horizontal-align:               0.5;
+        vertical-align:                 0.5;
+        margin:                         0.5% 0.5% -0.5% 0.5%;
+}
+
+element-text, element-icon {
+        background-color:               inherit;
+        text-color:                     inherit;
+}
+
+element selected {
+        background-color:               @button;
+        border-radius:                  6px;
+}

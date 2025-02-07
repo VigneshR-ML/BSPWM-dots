@@ -1,0 +1,97 @@
+// https://github.com/gh0stzk/dotfiles
+
+configuration {
+    modi:                        "drun";
+    show-icons:                  true;
+    drun-display-format:         "{name}";
+    //hover-select:				 true;
+	//me-select-entry:			 "";
+	//me-accept-entry:			 "MousePrimary";
+}
+
+@theme "/dev/null"
+
+* {
+        bg:                             #151515;
+        fg:                             #e8e8d3;
+        accent:                         #687363;
+        button:                         #1c1c1c;
+
+        background-color:               @bg;
+        text-color:                     @fg;
+}
+
+window {
+    enabled:                     true;
+    fullscreen:                  false;
+    width:                       50%;
+    height:                      70%;
+	position:		 center;
+    transparency:                "real";
+    cursor:                      "default";
+     border-radius:               10;
+   
+}
+mainbox {
+        children:                       [ listview ];
+        spacing:                        2%;
+        padding:                        2% 1% 2% 1%;
+}
+
+listview {
+    enabled:                     true;
+    columns:                     3;
+    lines:                       3;
+    spacing:                     20px;
+    padding:                     30px 30px;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   true;
+    layout:                      vertical;
+    reverse:                     true;
+    fixed-height:                true;
+    fixed-columns:               true;
+    cursor:                      "default";
+    background-color:            transparent;
+    text-color:                  @foreground;
+}
+//----- Elements -----//
+
+element {
+    enabled:                     true;
+    orientation:                 horizontal;
+    spacing:                     0px;
+    padding:                     0px;
+    border-radius:               10;
+    cursor:                      pointer;
+}
+
+@media(max-aspect-ratio: 1.8) {
+    element {
+        orientation:             vertical;
+    }
+}
+
+element selected.normal {
+    background-color:            @accent;
+    text-color:                  @foreground;
+}
+
+element-icon {
+    size:                        20%;
+    cursor:                      inherit;
+    border-radius:               10;
+    background-color:            transparent;
+    text-color:                  inherit;
+    border:						0px solid;
+    border-color: 				 @button;
+}
+
+element-text {
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+    padding:                     20px;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+}
