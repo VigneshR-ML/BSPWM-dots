@@ -6,11 +6,14 @@ set -euo pipefail
 
 CONFIG="$HOME/.config/bspwm/polybar/config/config.ini"
 
+LOG="${XDG_RUNTIME_DIR:-/tmp}/polybar.log"
+: >"$LOG"
+
 killall -q polybar 2>/dev/null || true
 while pgrep -x polybar >/dev/null; do sleep 0.3; done
 
-polybar left  -c "$CONFIG" &
-polybar right -c "$CONFIG" &
+nohup polybar left  -c "$CONFIG" >>"$LOG" 2>&1 &
+nohup polybar right -c "$CONFIG" >>"$LOG" 2>&1 &
 
 sleep 1
 if ! pgrep -x polybar >/dev/null; then

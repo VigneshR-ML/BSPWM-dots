@@ -1,20 +1,11 @@
-/******* Wallpaper picker *******/
+/******* Wallpaper picker  *******/
 configuration {
 	show-icons: false;
 	font: "Iosevka Nerd Font 18";
 }
 
+@import "~/.cache/wal/colors-rofi.rasi"
 @theme "/dev/null"
-
-* {
-	bg:      #151515;
-	fg:      #e8e8d3;
-	accent:  #616569;
-	button:  #1c1c1c;
-
-	background-color: @bg;
-	text-color:       @fg;
-}
 
 window {
 	transparency: "real";
@@ -34,7 +25,7 @@ mainbox {
 
 inputbar {
 	children: ["textbox-prompt-colon", "entry"];
-	background-color: @button;
+	background-color: @bg;
 	border-radius: 6px;
 	padding: 8px;
 }
@@ -67,7 +58,7 @@ element {
 
 element selected {
 	background-color: @accent;
-	text-color: #151515;
+	text-color: @bg;
 }
 
 element-text {

@@ -1,0 +1,9 @@
+/******* pywal palette for rofi - matches polybar config/colors.ini  *******/
+* {
+    bg:      {color0};
+    fg:      {foreground};
+    accent:  {color3};
+
+    background-color: {color0};
+    text-color:       {foreground};
+}
