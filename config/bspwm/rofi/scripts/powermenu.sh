@@ -1,114 +1,63 @@
 #!/usr/bin/env bash
 #
-#               _____
-#   _________  / __(_)  ____  ____ _      _____  _____
-#  / ___/ __ \/ /_/ /  / __ \/ __ \ | /| / / _ \/ ___/
-# / /  / /_/ / __/ /  / /_/ / /_/ / |/ |/ /  __/ /
-#/_/   \____/_/ /_/  / .___/\____/|__/|__/\___/_/
-#                   /_/           /_/
+# powermenu.sh - system power menu (rofi)
 #
-## Author : Aditya Shakya (adi1090x)
-## Github : @adi1090x
+# macOS-style shutdown/restart/lock/sleep/logout, with a yes/no confirmation
+# for the destructive actions.
 #
-## Rofi   : Power Menu
-#
+set -euo pipefail
 
-# Current Theme
-dir="$HOME/.config/bspwm/rofi/"
-theme='powermenu'
+THEME="$HOME/.config/bspwm/rofi/powermenu.rasi"
+host="$(hostname)"
+uptime_str="$(uptime -p | sed 's/^up //')"
 
-# CMDs
-uptime="`uptime -p | sed -e 's/up //g'`"
-host=`hostname`
-
-# Options
-shutdown='  Shutdown'
-reboot='  Reboot'
-lock=' Lock'
-suspend='⏾  Suspend'
-logout='  Logout'
-yes='󰄴 Yes'
-no=' No'
-
-# Rofi CMD
-rofi_cmd() {
-	rofi -dmenu \
-		-p "$host" \
-		-mesg "Uptime: $uptime" \
-		-theme $HOME/.config/bspwm/rofi/powermenu.rasi 
+menu() {
+    rofi -dmenu -p "$host" -mesg "Uptime: $uptime_str" -theme "$THEME"
 }
 
-# Confirmation CMD
-confirm_cmd() {
-	rofi -theme-str 'window {location: center; anchor: center; fullscreen: false; width: 250px;}' \
-		-theme-str 'mainbox {children: [ "message", "listview" ];}' \
-		-theme-str 'listview {columns: 2; lines: 1;}' \
-		-theme-str 'element-text {horizontal-align: 0.5;}' \
-		-theme-str 'textbox {horizontal-align: 0.5;}' \
-		-dmenu \
-		-p 'Confirmation' \
-		-mesg 'Are you Sure?' \
-		-theme ${dir}/${theme}.rasi
+confirm() {
+    printf 'Yes\nNo\n' |
+        rofi -dmenu -p "Are you sure?" -theme-str 'listview {columns: 2; lines: 1;}' \
+             -theme "$THEME"
 }
 
-# Ask for confirmation
-confirm_exit() {
-	echo -e "$yes\n$no" | confirm_cmd
+lock_screen() {
+    "$HOME/.config/bspwm/bin/lock.sh"
 }
 
-# Pass variables to rofi dmenu
-run_rofi() {
-	echo -e "$lock\n$suspend\n$logout\n$reboot\n$shutdown" | rofi_cmd
+suspend() {
+    playerctl -a pause 2>/dev/null || true
+    pactl set-sink-mute @DEFAULT_SINK@ 1 2>/dev/null || true
+    systemctl suspend
 }
 
-# Execute Command
-run_cmd() {
-	selected="$(confirm_exit)"
-	if [[ "$selected" == "$yes" ]]; then
-		if [[ $1 == '--shutdown' ]]; then
-			systemctl poweroff
-		elif [[ $1 == '--reboot' ]]; then
-			systemctl reboot
-		elif [[ $1 == '--suspend' ]]; then
-			playerctl -a pause 2>/dev/null
-			pactl set-sink-mute @DEFAULT_SINK@ 1 2>/dev/null
-			systemctl suspend
-		elif [[ $1 == '--logout' ]]; then
-			if [[ "$DESKTOP_SESSION" == 'openbox' ]]; then
-				openbox --exit
-			elif [[ "$DESKTOP_SESSION" == 'bspwm' ]]; then
-				bspc quit
-			elif [[ "$DESKTOP_SESSION" == 'i3' ]]; then
-				i3-msg exit
-			elif [[ "$DESKTOP_SESSION" == 'plasma' ]]; then
-				qdbus org.kde.ksmserver /KSMServer logout 0 0 0
-			fi
-		fi
-	else
-		exit 0
-	fi
+run() {
+    local action="$1"
+    case "$action" in
+        Lock) lock_screen ;;
+        Sleep) suspend ;;
+        Logout)
+            [ "$(confirm)" = "Yes" ] && bspc quit
+            ;;
+        Reboot)
+            [ "$(confirm)" = "Yes" ] && systemctl reboot
+            ;;
+        "Shut Down")
+            [ "$(confirm)" = "Yes" ] && systemctl poweroff
+            ;;
+    esac
 }
 
-# Actions
-chosen="$(run_rofi)"
-case ${chosen} in
-    $shutdown)
-		run_cmd --shutdown
-        ;;
-    $reboot)
-		run_cmd --reboot
-        ;;
-    $lock)
-		if [[ -x '/usr/bin/betterlockscreen' ]]; then
-			betterlockscreen -l
-		elif [[ -x '/usr/bin/i3lock' ]]; then
-			i3lock
-		fi
-        ;;
-    $suspend)
-		run_cmd --suspend
-        ;;
-    $logout)
-		run_cmd --logout
-        ;;
-esac
+main() {
+    local options chosen
+    options="󰌾  Lock
+󰍃  Logout
+  Sleep
+󰜉  Reboot
+⏻  Shut Down"
+
+    chosen="$(printf '%s\n' "$options" | menu)" || exit 1
+    run "${chosen#* }"
+}
+
+main

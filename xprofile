@@ -1,4 +1,8 @@
-export GDK_DPI_SCALE=0.5
+# ~/.xprofile - sourced by display managers (GDM etc.). Plain `startx` users
+# get the same values from ~/.xinitrc instead, so keep them in sync here.
+
 export GDK_SCALE=2
-export QT_SCALE_FACTOR=1.5 
-export Xft.dpi=243
+export GDK_DPI_SCALE=0.5
+export QT_SCALE_FACTOR=1.5
+export Xft.dpi=192
+export PATH="$HOME/.local/bin:$PATH"

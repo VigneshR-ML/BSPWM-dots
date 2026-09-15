@@ -1,44 +1,45 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+#
+# volume.sh - speaker/headphone volume control (PipeWire / PulseAudio)
+#
+# Usage:
+#   volume.sh --inc     raise volume by 5%
+#   volume.sh --dec     lower volume by 5%
+#   volume.sh --toggle  mute/unmute
+#
+set -euo pipefail
 
-send_notif() {
+STEP=5
+NOTIFY_ID=7081
+
+notify() {
     dunstctl close-all
+    local sink volume muted icon
+    sink="$(pactl get-default-sink)"
+    volume="$(pactl get-sink-volume "$sink" | awk '{print int($5)}')"
+    muted="$(pactl get-sink-mute "$sink" | awk '{print $2}')"
 
-    # Get the default sink (audio output)
-    sink=$(pactl get-default-sink)
-
-    # Get the volume level
-    volume=$(pactl get-sink-volume "$sink" | awk '{print $5}' | tr -d '%')
-
-    # Get the mute status
-    muted=$(pactl get-sink-mute "$sink" | awk '{print $2}')
-
-    # Select volume icon based on volume level
     if [ "$muted" = "yes" ]; then
-        icon="󰖁 "  # Muted icon
-        volume="Muted"
-    elif [ "$volume" -le 33 ]; then
-        icon="󰕿 "  # Low volume
-    elif [ "$volume" -le 66 ]; then
-        icon="󰖀 "  # Medium volume
-    else
-        icon="󰕾 "  # High volume
+        icon="󰖁"
+        dunstify -r "$NOTIFY_ID" -h int:value:0 "$icon Volume: muted" -t 1200
+        return
     fi
 
-    # Send notification with icon
-    dunstify -h int:value:"$volume" "$icon Volume: $volume%" -t 1000
+    if   [ "$volume" -le 33 ]; then icon="󰕿"
+    elif [ "$volume" -le 66 ]; then icon="󰖀"
+    else icon="󰕾"; fi
+
+    dunstify -r "$NOTIFY_ID" -h int:value:"$volume" "$icon Volume: $volume%" -t 1200
 }
 
-# Execute accordingly
-case "$1" in
-    "--inc")
-        pactl set-sink-volume @DEFAULT_SINK@ +1%
-        send_notif
-        ;;
-    "--dec")
-        pactl set-sink-volume @DEFAULT_SINK@ -1%
-        send_notif
-        ;;
+case "${1:-}" in
+    --inc)    pactl set-sink-volume @DEFAULT_SINK@ +"$STEP"% ;;
+    --dec)    pactl set-sink-volume @DEFAULT_SINK@ -"$STEP"% ;;
+    --toggle) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
     *)
-        send_notif
+        echo "usage: $0 {--inc|--dec|--toggle}" >&2
+        exit 2
         ;;
 esac
+
+notify

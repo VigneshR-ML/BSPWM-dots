@@ -1,7 +1,7 @@
-/******* Bluetooth menu *******/
+/******* Wallpaper picker *******/
 configuration {
 	show-icons: false;
-	font: "Iosevka Nerd Font 20";
+	font: "Iosevka Nerd Font 18";
 }
 
 @theme "/dev/null"
@@ -21,14 +21,14 @@ window {
 	location: center;
 	anchor: center;
 	fullscreen: false;
-	width: 34%;
-	height: 42%;
+	width: 48%;
+	height: 46%;
 	border-radius: 10px;
 	padding: 12px;
 }
 
 mainbox {
-	children: [ "inputbar", "message", "listview" ];
+	children: [ "inputbar", "listview" ];
 	spacing: 2%;
 }
 
@@ -40,35 +40,29 @@ inputbar {
 }
 
 textbox-prompt-colon {
-	str: "󰂯";
+	str: "󰸉";
 	text-color: @fg;
 	padding: 0 6px 0 4px;
 }
 
 entry {
-	placeholder: "Search";
+	placeholder: "Wallpaper name";
 	placeholder-color: @fg;
 	text-color: @fg;
 	cursor: "text";
 }
 
-message {
-	padding: 6px 10px;
-	background-color: @button;
-	border-radius: 6px;
-	text-color: @fg;
-}
-
 listview {
-	columns: 1;
+	columns: 2;
 	lines: 8;
-	spacing: 4px;
+	spacing: 6px;
 	scrollbar: true;
+	layout: vertical;
 }
 
 element {
 	border-radius: 6px;
-	padding: 6px;
+	padding: 8px;
 }
 
 element selected {
@@ -76,13 +70,7 @@ element selected {
 	text-color: #151515;
 }
 
-textbox {
-	text-color: @fg;
-	blink: true;
-	markup: true;
-}
-error-message {
-	background-color: @bg;
-	text-color: @fg;
-	padding: 15px;
+element-text {
+	horizontal-align: 0.5;
+	vertical-align: 0.5;
 }

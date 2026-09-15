@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# switch-btw : toggle the picom desktop-switch animation between SLIDE (mac) and FADE.
+# Usage: switch-btw        (toggles)
+#        switch-btw btw    (same as no arg, kept for the old "switch btw" habit)
+
+DIR="${XDG_CONFIG_HOME:-$HOME/.config}/picom"
+STATE="$DIR/mode"
+SLIDE="$DIR/anim-slide.conf"
+FADE="$DIR/anim-fade.conf"
+ACTIVE="$DIR/anim-active.conf"
+
+# read current mode (default to slide if no state file yet)
+if [ ! -e "$STATE" ] || [ "$(cat "$STATE")" = "fade" ]; then
+    MODE=slide
+    TARGET="$SLIDE"
+else
+    MODE=fade
+    TARGET="$FADE"
+fi
+
+echo "$MODE" > "$STATE"
+
+# atomically point the active profile at the chosen one
+tmp="$ACTIVE.$$"
+ln -sf "$TARGET" "$tmp"
+mv -f "$tmp" "$ACTIVE"
+
+# restart picom so it picks up the new profile, waiting for it to die first
+pkill -x picom 2>/dev/null
+i=0
+while pgrep -x picom >/dev/null 2>&1 && [ "$i" -lt 20 ]; do
+    sleep 0.1
+    i=$((i+1))
+done
+(picom --config "$DIR/picom.conf" >/dev/null 2>&1 &) 2>/dev/null
+
+echo "Desktop animation: $MODE"

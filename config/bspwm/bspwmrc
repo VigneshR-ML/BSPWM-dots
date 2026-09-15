@@ -1,48 +1,57 @@
-#! /bin/sh
+#!/usr/bin/env sh
+# ============================================================================
+# bspwmrc - window manager bootstrap
+# Apple Silicon / Asahi Fedora edition
+# ============================================================================
 
-pgrep -x sxhkd > /dev/null || sxhkd &
+# --- key bindings -----------------------------------------------------------
+pgrep -x sxhkd >/dev/null || sxhkd &
 
-# Start the touchpad gesture daemon (libinput-gestures) if installed and not already running
+# --- touchpad gestures (libinput) --------------------------------------------
 if command -v libinput-gestures >/dev/null 2>&1; then
     pgrep -x libinput-gestures >/dev/null 2>&1 || libinput-gestures &
 fi
 
-# Default cursor
+# --- session daemons ---------------------------------------------------------
+~/.config/bspwm/autostart.sh
+
+# --- displays ----------------------------------------------------------------
+bspc monitor -d I II III IV V VI VII VIII IX X
+
+# --- visuals -----------------------------------------------------------------
 xsetroot -cursor_name left_ptr
 
-# Never blank/sleep the display while idle (DPMS wake hang on Apple Silicon)
+# Never blank/sleep the display while idle: DPMS wake hangs the Apple panel.
 xset s off -dpms
 
-# Autostart programs
-~/.config/bspwm/exec/autostart/autostart.sh
+# --- window management --------------------------------------------------------
+bspc config border_width           2
+bspc config window_gap             12
+bspc config split_ratio            0.50
+bspc config borderless_monocle     true
+bspc config gapless_monocle        false
+bspc config pointer_follows_focus  true
+bspc config focus_follows_pointer  true
 
-bspc monitor -d I II III IV V VI VII VIII IX X 
-bspc config border_width         2
-bspc config window_gap          12
-
-bspc config split_ratio          0.50
-bspc config borderless_monocle   true
-bspc config gapless_monocle      false
-bspc config pointer_follows_focus true
-bspc config focus_follows_pointer   true
-
-# CopyQ clipboard popup: tall narrow floating non-sticky preview window
+# CopyQ clipboard preview: tall narrow floating non-sticky window.
 bspc rule -a copyq state=floating rectangle=500x750+1030+848 sticky=off
 
+# --- resources / keys ---------------------------------------------------------
 xrdb -merge ~/.Xresources &
 
-# Apple Cmd key (keycode 207) -> Super_L so super+v / cmd+v works
+# Apple Cmd key (keycode 207, unlocked from Hyper_L) -> Super_L, so that
+# Super+{c,v,x,tab} feel like macOS Cmd+{c,v,x,tab}.
 xmodmap ~/.Xmodmap
 
-# Tap-to-click + natural tap behaviour on the Apple trackpad
+# --- Apple trackpad -----------------------------------------------------------
+# Tap-to-click on the Apple MTP (multi-touch) trackpad.
 xinput set-prop "Apple MTP multi-touch" "libinput Tapping Enabled" 1 2>/dev/null || true
-
-# Low-friction, smooth, slightly faster cursor on the Apple trackpad
+# Adaptive acceleration profile with a smooth, slightly faster pointer.
 xinput set-prop "Apple MTP multi-touch" "libinput Accel Profile Enabled" 0 1 0 2>/dev/null || true
 xinput set-prop "Apple MTP multi-touch" "libinput Accel Speed" 0.65 2>/dev/null || true
 
-# Keyboard backlight always on
-brightnessctl -d kbd_backlight s 255
+# --- keyboard backlight (always on) -------------------------------------------
+brightnessctl -q -d kbd_backlight s 255 2>/dev/null || true
 
-# Reduce DPI for CopyQ only (0.75 of system HiDPI scaling)
+# --- startup applications ------------------------------------------------------
 QT_SCALE_FACTOR=0.75 copyq &

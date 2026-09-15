@@ -50,17 +50,22 @@ cp -r config/.           ~/.config/
 cp xinitrc xprofile Xresources Xmodmap ~/
 cp -n fonts/*.ttf        ~/.local/share/fonts/
 fc-cache -f
+mkdir -p ~/.cache/bspwm ~/.local/bin
 cp -n Pictures/Wallpaper/* ~/Pictures/Wallpaper/
-chmod +x ~/.config/bspwm/bin/*.sh \
-         ~/.config/bspwm/exec/**/*.sh \
+install -m 755 config/bspwm/bin/switch-btw ~/.local/bin/switch-btw
+chmod +x ~/.config/bspwm/bspwmrc \
+         ~/.config/bspwm/autostart.sh \
+         ~/.config/bspwm/bin/*.sh \
+         ~/.config/bspwm/scripts/*.sh \
          ~/.config/bspwm/polybar/launch.sh \
          ~/.config/bspwm/rofi/scripts/*.sh
 ```
 
 Required packages (dnf names): `bspwm sxhkd polybar picom rofi dunst feh
-ImageMagick i3lock xss-lock brightnessctl copyq Thunar maim xclip playerctl
-alacritty fish pipewire-pulseaudio wireplumber pulseaudio-utils blueman
-libinput-gestures` plus the `xorg-x11-*` basics.
+ImageMagick i3lock brightnessctl copyq Thunar maim xclip playerctl alacritty
+fish pipewire-pulseaudio wireplumber pulseaudio-utils blueman bluez` plus the
+`xorg-x11-*` basics; then pywal (pipx) and libinput-gestures (git); `switch-btw`
+needs `picom` with an `anim-*.conf` + `mode` fade include.
 
 ## Keybindings
 
@@ -68,12 +73,14 @@ libinput-gestures` plus the `xorg-x11-*` basics.
 |------|--------|
 | `Super + Return` | Terminal (alacritty) |
 | `Super + D` | App launcher (rofi drun) |
+| `Super + A` | Window switcher |
+| `Super + Shift + Z` | File manager (Thunar) |
 | `Super + P` | Power menu (shutdown/reboot/suspend/lock/logout) |
-| `Super + W` / `Super + Shift + W` | Wallpaper picker / Wi-Fi menu |
-| `Super + B` | Bluetooth menu |
+| `Super + W` / `Super + Backslash` | Wallpaper picker / random |
+| `Super + Shift + W` / `Super + B` | Wi-Fi menu / Bluetooth menu |
 | `Super + Shift + L` | Lock screen |
 | `Super + Space` | Keyboard layout (US/RU) |
-| `Super + Y` | Screenshot (full / `+Shift` area, `+Ctrl` save) |
+| `Super + Y` | Screenshot (full / `+Shift` region, `+Ctrl` save) |
 | `Super + V` | Clipboard (copyq) |
 | `Super + {H,J,K,L}` | Focus direction |
 | `Super + Shift + {H,J,K,L}` | Move window |
@@ -91,6 +98,9 @@ libinput-gestures` plus the `xorg-x11-*` basics.
   when waking from DPMS off, freezing the whole session. The idle path is
   therefore disabled (`xset s off -dpms` in `bspwmrc`, no `xss-lock`).
   Lock on demand with `Super + Shift + L`.
+- `switch-btw` (alias `anim`) toggles the picom desktop-switch animation
+  (slide/fade) — a macOS Mission-Control feel. It only toggles `mode` in the
+  active anim config and restarts picom.
 - `localhost` timers in polybar are per-machine; `xset s off -dpms` is safe
   everywhere.
 - Runs 10 desktops (I-X) on one monitor; add `bspc monitor -d` lines if you

@@ -56,9 +56,9 @@ sudo dnf install -y \
     dbus-x11 \
     bspwm sxhkd \
     polybar picom \
-    rofi rofi-themes \
+    rofi \
     dunst \
-    i3lock xss-lock \
+    i3lock \
     feh ImageMagick \
     brightnessctl \
     Thunar \
@@ -128,9 +128,10 @@ cp -n "$REPO_DIR"/fonts/*.ttf "$REAL_HOME/.local/share/fonts/" || true
 fc-cache -f >/dev/null 2>&1 || true
 
 # ----------------------------------------------------------------------------
-say "Setting up wallpaper + screenshots directories"
+say "Setting up wallpaper + screenshots + bspwm cache directories"
 # ----------------------------------------------------------------------------
-mkdir -p "$REAL_HOME/Pictures/Wallpaper" "$REAL_HOME/Pictures/Screenshots"
+mkdir -p "$REAL_HOME/Pictures/Wallpaper" "$REAL_HOME/Pictures/Screenshots" \
+    "$REAL_HOME/.cache/bspwm" "$REAL_HOME/.local/bin"
 if [ -d "$REPO_DIR/Pictures/Wallpaper" ]; then
     cp -n "$REPO_DIR"/Pictures/Wallpaper/* "$REAL_HOME/Pictures/Wallpaper/" || true
 fi
@@ -140,11 +141,16 @@ say "Making helper scripts executable"
 # ----------------------------------------------------------------------------
 chmod +x \
     "$REAL_HOME/.config/bspwm/bspwmrc" \
+    "$REAL_HOME/.config/bspwm/autostart.sh" \
     "$REAL_HOME/.config/bspwm/bin/"*.sh \
-    "$REAL_HOME/.config/bspwm/exec/autostart/autostart.sh" \
-    "$REAL_HOME/.config/bspwm/exec/wallpaper/"*.sh \
+    "$REAL_HOME/.config/bspwm/scripts/"*.sh \
     "$REAL_HOME/.config/bspwm/polybar/launch.sh" \
     "$REAL_HOME/.config/bspwm/rofi/scripts/"*.sh
+
+# ----------------------------------------------------------------------------
+say "Installing switch-btw (picom animation toggle) to ~/.local/bin"
+# ----------------------------------------------------------------------------
+install -m 755 "$REPO_DIR/config/bspwm/bin/switch-btw" "$REAL_HOME/.local/bin/switch-btw"
 
 # ----------------------------------------------------------------------------
 say "Done"
@@ -159,9 +165,12 @@ Setup finished for user '$REAL_USER'.
 
   Notes:
    - Brightness keys  -> brightnessctl  (F1/F2)
-   - Volume keys      -> pactl          (F11/F12)
+   - Volume keys      -> pactl          (F11/F12, media player via XF86Audio*)
    - Lock screen      -> Super+Shift+L
+   - Screenshots      -> Super+Y (full) / Super+Shift+Y (region), +Ctrl to save
+   - Wallpaper picker -> Super+W | random -> Super+Backslash | wifi -> Super+Shift+W
+   - Bluetooth menu   -> Super+B | App menu -> Super+A | Power menu -> Super+P
+   - anim (picom fade on/off)  -> switch-btw in ~/.local/bin
    - No auto-lock and no DPMS blanking: Apple Silicon screens hang on
      DPMS wake, so idle never blanks the display (see bspwmrc).
-   - Wallpaper picker -> Super+W | random -> Super+Backslash | wifi -> Super+Shift+W
 EOF

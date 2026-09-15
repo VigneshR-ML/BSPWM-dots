@@ -1,8 +1,12 @@
+! X resources - shared HiDPI settings for all X clients.
+
+! 2x scale on the 2560x1600 MacBook panel.
 Xft.dpi: 192
+
 Xft.hinting: 1
 Xft.autohint: 0
-Xft.rgba:rgb
-Xft.hintstyle: hintfull
-Xft.lcdfilter: lcddefault
 Xft.hintstyle: hintslight
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+
 Xcursor.size: 22

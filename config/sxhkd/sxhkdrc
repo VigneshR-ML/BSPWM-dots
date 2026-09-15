@@ -1,42 +1,100 @@
 #
-# wm independent hotkeys
+# sxhkdrc - keyboard shortcuts
+# Requires: ~/.config/bspwm/{bin,rofi/scripts,scripts}
 #
 
+# ------------------------------------------------------------------ launch --
 # terminal emulator
 super + Return
 	alacritty
 
 # program launcher
 super + d
-	rofi -no-config -no-lazy-grab -dpi 144 -show drun -modi drun -theme ~/.config/bspwm/rofi/launcher.rasi
+	rofi -show drun -modi drun -theme ~/.config/bspwm/rofi/launcher.rasi
 
-# system / network menus
+# window switcher
+super + a
+	rofi -show window -theme ~/.config/bspwm/rofi/launcher.rasi
+
+# file manager
+super + shift + z
+	thunar open
+
+# clipboard
+super + v
+	copyq show
+
+# ----------------------------------------------------------- system / shell --
+# power menu / lock / wifi / bluetooth / wallpaper picker
 super + p
 	~/.config/bspwm/rofi/scripts/powermenu.sh
-super + w
-	~/.config/bspwm/rofi/scripts/wallpaper.sh
+super + shift + l
+	~/.config/bspwm/bin/lock.sh &
 super + shift + w
 	~/.config/bspwm/rofi/scripts/wifi.sh
 super + b
 	~/.config/bspwm/rofi/scripts/bluetooth.sh
+super + w
+	~/.config/bspwm/scripts/wallpaper-pick.sh
 
-# make sxhkd reload its configuration files:
-super + Escape
-	pkill -USR1 -x sxhkd
+# random wallpaper
+super + backslash
+	~/.config/bspwm/scripts/wallpaper-random.sh
 
 # keyboard layout (us/ru)
 super + space
 	~/.config/bspwm/bin/layout.sh
 
-# manual screen lock
-super + shift + l
-	~/.config/bspwm/bin/lock.sh &
+# reload sxhkd
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# ------------------------------------------------------------- media (hard) --
+# volume (PipeWire): F11 down, F12 up, mute
+XF86AudioLowerVolume
+	~/.config/bspwm/bin/volume.sh --dec
+XF86AudioRaiseVolume
+	~/.config/bspwm/bin/volume.sh --inc
+XF86AudioMute
+	~/.config/bspwm/bin/volume.sh --toggle
+
+# media control (playerctl): F7 prev, F8 play/pause, F9 next
+XF86AudioPrev
+	~/.config/bspwm/bin/media.sh previous
+XF86AudioPlay
+	~/.config/bspwm/bin/media.sh play-pause
+XF86AudioNext
+	~/.config/bspwm/bin/media.sh next
+
+# brightness (F1 / F2); Apple keyboard shows them as brightness icons
+XF86MonBrightnessDown
+	~/.config/bspwm/bin/brightness.sh --dec
+XF86MonBrightnessUp
+	~/.config/bspwm/bin/brightness.sh --inc
+
+# --------------------------------------------------------------- screenshots --
+# full screen -> clipboard   (macOS Cmd+Shift+3)
+super + y
+	~/.config/bspwm/bin/screenshot.sh
+# region select -> clipboard (macOS Cmd+Shift+4)
+super + shift + y
+	~/.config/bspwm/bin/screenshot.sh --region
+# full screen -> ~/Pictures/Screenshots
+super + ctrl + y
+	~/.config/bspwm/bin/screenshot.sh --save
+# region select -> save
+super + ctrl + shift + y
+	~/.config/bspwm/bin/screenshot.sh --save --region
 
 #
-# bspwm hotkeys
+# bspwm: window management
 #
 
-# quit/restart bspwm
+# desktop switching: switches workspace with trackpad/magic-mouse buttons
+super + control + {Left,Right}
+	bspc desktop -f {prev,next}.local.occupied
+
+# quit / restart bspwm
 super + alt + {q,r}
 	bspc {quit,wm -r}
 
@@ -53,7 +111,7 @@ super + g
 	bspc node -s biggest.window
 
 #
-# state/flags
+# bspwm: state / flags
 #
 
 # set the window state
@@ -65,143 +123,69 @@ super + ctrl + {m,x,y,p}
 	bspc node -g {marked,locked,sticky,private}
 
 #
-# focus/swap
+# bspwm: focus / swap
 #
 
-# focus the node in the given direction
+# focus or swap the node in the given direction
 super + {_,shift + }{h,j,k,l}
 	bspc node -{f,s} {west,south,north,east}
 
-# focus the node for the given path jump
+# focus the first/second node on the workspace
 super + {comma,period}
 	bspc node -f @{first,second}
 
-# focus the next/previous window in the current desktop
+# focus the previous/next window in the current workspace
 super + {_,shift + }c
 	bspc node -f {next,prev}.local.!hidden.window
 
-# focus the next/previous desktop in the current monitor
+# jump to the previous/next occupied workspace
 super + {z,alt+z}
 	bspc desktop -f {next,prev}.local.occupied
 
-# focus the last node/desktop
+# focus the last node / desktop
 super + {grave,Tab}
 	bspc {node,desktop} -f last
 
-# focus the older or newer node in the focus history
+# move along the focus history
 super + {o,i}
 	bspc node {older,newer} -f
 
-# focus or send to the given desktop
+# focus / send to desktop 1-10
 super + {_,shift + }{1-9,0}
 	bspc {desktop -f,node -d} '^{1-9,10}'
-# next 10
-super + alt + {_, shift + }{1-9,0}
-    bspc {desktop -f,node -d} '^{11,12,13,14,15,16,17,18,19,20}'
+super + alt + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{11,12,13,14,15,16,17,18,19,20}'
 
 #
-# preselect
+# bspwm: preselection
 #
 
-# preselect the direction
+# preselect a direction
 super + ctrl + {h,j,k,l}
 	bspc node -p {west,south,north,east}
 
-# preselect the ratio
+# preselect the split ratio
 super + ctrl + {1-9}
 	bspc node -o 0.{1-9}
 
-# cancel the preselection for the focused node
+# cancel the preselection
 super + ctrl + space
 	bspc node -p cancel
-
-# cancel the preselection for the focused desktop
 super + ctrl + shift + space
 	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
 
 #
-# move/resize
+# bspwm: move / resize
 #
 
-# expand a window by moving one of its side outward
+# expand a window by moving its side outward
 super + alt + {h,j,k,l}
 	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
 
-# contract a window by moving one of its side inward
+# contract a window by moving its side inward
 super + alt + shift + {h,j,k,l}
 	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
 
 # move a floating window
 super + {Left,Down,Up,Right}
 	bspc node -v {-20 0,0 20,0 -20,20 0}
-
-
-# Volume
-XF86AudioRaiseVolume
-	~/.config/bspwm/bin/volume.sh --inc
-
-XF86AudioLowerVolume
-	~/.config/bspwm/bin/volume.sh --dec
-
-XF86AudioMute
-    pactl set-sink-mute @DEFAULT_SINK@ toggle
-
-# Brightness
-XF86MonBrightnessUp
-	 ~/.config/bspwm/bin/brightness.sh --inc
-
-XF86MonBrightnessDown
-	~/.config/bspwm/bin/brightness.sh --dec
-
-# Screenshots (requires maim + xclip)
-super + y
-	maim | xclip -sel clip -t image/png
-
-super + shift + y
-	maim -u -s | xclip -sel clip -t image/png
-
-super + control + y
-	maim ~/Pictures/Screenshots/screenshot-$(date +%s).png
-
-super + control + shift + y
-	maim -u -s ~/Pictures/Screenshots/screenshot-$(date +%s).png
-
-# Media (requires playerctl)
-super + shift + p
-	playerctl play-pause
-
-super + shift + bracket{left,right}
-	playerctl {previous,next}
-
-# XF86 media keys
-XF86AudioPlay
-	playerctl play-pause
-
-XF86AudioNext
-	playerctl next
-
-XF86AudioPrev
-	playerctl previous
-
-# Mouse: switch workspace with trackpad/magic-mouse buttons
-super + control + {Left,Right}
-        bspc desktop -f {prev,next}.local.occupied
-
-# File manager
-super + shift + z
-	thunar open
-
-# Wallpaper (random pick)
-super + backslash
-	~/.config/bspwm/exec/wallpaper/random_wallpaper.sh
-
-# Clipboard
-super + v
-	copyq show
-
-# Keyboard broken, workaround to press broken keys :/
-#XF86Launch1
-#	~/.config/scripts/keys/two.sh
-
-#super + control + XF86Launch1
-#	~/.config/scripts/keys/at.sh
