@@ -58,7 +58,7 @@ confirm_exit() {
 
 # Pass variables to rofi dmenu
 run_rofi() {
-	echo -e "$suspend\n$logout\n$reboot\n$shutdown" | rofi_cmd
+	echo -e "$lock\n$suspend\n$logout\n$reboot\n$shutdown" | rofi_cmd
 }
 
 # Execute Command
@@ -70,8 +70,8 @@ run_cmd() {
 		elif [[ $1 == '--reboot' ]]; then
 			systemctl reboot
 		elif [[ $1 == '--suspend' ]]; then
-			mpc -q pause
-			amixer set Master mute
+			playerctl -a pause 2>/dev/null
+			pactl set-sink-mute @DEFAULT_SINK@ 1 2>/dev/null
 			systemctl suspend
 		elif [[ $1 == '--logout' ]]; then
 			if [[ "$DESKTOP_SESSION" == 'openbox' ]]; then

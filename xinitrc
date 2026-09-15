@@ -1,8 +1,8 @@
-#merge xresorces
-xrbd -merge ~/.Xresources
+#merge xresources
+xrdb -merge ~/.Xresources
 
 # Set DPI
-export Xft.dpi=192
+#export Xft.dpi=192
 
 # Set GTK Scaling
 export GDK_SCALE=2

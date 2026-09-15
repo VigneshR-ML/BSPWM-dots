@@ -1,7 +1,8 @@
 #!/bin/bash
 
 feh --bg-scale "$1"
-wal -i "$1"
+wal -i "$1" -n -e
+xrdb -merge ~/.cache/wal/colors.Xresources
 truncate -s 0 ~/.config/bspwm/exec/wallpaper/current_wall
 echo "$1" >> ~/.config/bspwm/exec/wallpaper/current_wall
 

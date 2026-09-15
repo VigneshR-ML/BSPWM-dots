@@ -1,0 +1,5 @@
+! On Apple (Asahi) keyboards the Cmd key is keycode 207 (Hyper_L).
+! Remap it to Super_L so bspwm/sxhkd super+c works like macOS cmd+c.
+keycode 207 = Super_L
+clear mod4
+add mod4 = Super_L

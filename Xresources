@@ -1,10 +1,8 @@
 Xft.dpi: 192
-Xft.antialias: 1
 Xft.hinting: 1
 Xft.autohint: 0
 Xft.rgba:rgb
 Xft.hintstyle: hintfull
 Xft.lcdfilter: lcddefault
-
-Xcursor.theme: Vanilla-DMZ
+Xft.hintstyle: hintslight
 Xcursor.size: 22

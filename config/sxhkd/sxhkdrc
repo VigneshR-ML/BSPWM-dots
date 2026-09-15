@@ -8,18 +8,29 @@ super + Return
 
 # program launcher
 super + d
-	rofi -no-config -no-lazy-grab -show drun -modi drun -theme ~/.config/bspwm/rofi/launcher.rasi
-	
+	rofi -no-config -no-lazy-grab -dpi 144 -show drun -modi drun -theme ~/.config/bspwm/rofi/launcher.rasi
+
+# system / network menus
 super + p
 	~/.config/bspwm/rofi/scripts/powermenu.sh
 super + w
 	~/.config/bspwm/rofi/scripts/wallpaper.sh
+super + shift + w
+	~/.config/bspwm/rofi/scripts/wifi.sh
 super + b
 	~/.config/bspwm/rofi/scripts/bluetooth.sh
-	
+
 # make sxhkd reload its configuration files:
 super + Escape
 	pkill -USR1 -x sxhkd
+
+# keyboard layout (us/ru)
+super + space
+	~/.config/bspwm/bin/layout.sh
+
+# manual screen lock
+super + shift + l
+	~/.config/bspwm/bin/lock.sh &
 
 #
 # bspwm hotkeys
@@ -36,10 +47,6 @@ super + {_,shift + }x
 # alternate between the tiled and monocle layout
 super + m
 	bspc desktop -l next
-
-# send the newest marked node to the newest preselected node
-super + y
-	bspc node newest.marked.local -n newest.!automatic.local
 
 # swap the current node and the biggest window
 super + g
@@ -66,13 +73,12 @@ super + {_,shift + }{h,j,k,l}
 	bspc node -{f,s} {west,south,north,east}
 
 # focus the node for the given path jump
-super + {o,v,comma,period}
-	bspc node -f @{parent,brother,first,second}
+super + {comma,period}
+	bspc node -f @{first,second}
 
 # focus the next/previous window in the current desktop
 super + {_,shift + }c
 	bspc node -f {next,prev}.local.!hidden.window
-
 
 # focus the next/previous desktop in the current monitor
 super + {z,alt+z}
@@ -84,9 +90,7 @@ super + {grave,Tab}
 
 # focus the older or newer node in the focus history
 super + {o,i}
-	bspc wm -h off; \
-	bspc node {older,newer} -f; \
-	bspc wm -h on
+	bspc node {older,newer} -f
 
 # focus or send to the given desktop
 super + {_,shift + }{1-9,0}
@@ -94,7 +98,6 @@ super + {_,shift + }{1-9,0}
 # next 10
 super + alt + {_, shift + }{1-9,0}
     bspc {desktop -f,node -d} '^{11,12,13,14,15,16,17,18,19,20}'
-
 
 #
 # preselect
@@ -133,76 +136,68 @@ super + {Left,Down,Up,Right}
 	bspc node -v {-20 0,0 20,0 -20,20 0}
 
 
-#Volume
+# Volume
 XF86AudioRaiseVolume
 	~/.config/bspwm/bin/volume.sh --inc
 
 XF86AudioLowerVolume
 	~/.config/bspwm/bin/volume.sh --dec
 
-# Toggle mute
 XF86AudioMute
     pactl set-sink-mute @DEFAULT_SINK@ toggle
 
 # Brightness
-# Increase the brightness
 XF86MonBrightnessUp
 	 ~/.config/bspwm/bin/brightness.sh --inc
 
-# Decrease the brightness
 XF86MonBrightnessDown
 	~/.config/bspwm/bin/brightness.sh --dec
 
-# ScreenShot
+# Screenshots (requires maim + xclip)
 super + y
-        maim | xclip -sel clip -t image/png
+	maim | xclip -sel clip -t image/png
 
 super + shift + y
-        maim -u -s | xclip -sel clip -t image/png
+	maim -u -s | xclip -sel clip -t image/png
 
 super + control + y
-        maim ~/Pictures/Screenshots/screenshot-$(date +%s).png
+	maim ~/Pictures/Screenshots/screenshot-$(date +%s).png
 
 super + control + shift + y
-        maim -u -s ~/Pictures/Screenshots/screenshot-$(date +%s).png
+	maim -u -s ~/Pictures/Screenshots/screenshot-$(date +%s).png
 
-# Media
-super + p
-        mpc toggle
-
-super + bracket{left,right}
-        mpc {prev,next}
-
+# Media (requires playerctl)
 super + shift + p
-        playerctl play-pause
+	playerctl play-pause
 
 super + shift + bracket{left,right}
 	playerctl {previous,next}
 
-# XF86 
-# Play/Pause
+# XF86 media keys
 XF86AudioPlay
-    playerctl play-pause
+	playerctl play-pause
 
-# Next
 XF86AudioNext
-    playerctl next
+	playerctl next
 
-# Previous
 XF86AudioPrev
-    playerctl previous
+	playerctl previous
 
-
-# Mouse
+# Mouse: switch workspace with trackpad/magic-mouse buttons
 super + control + {Left,Right}
         bspc desktop -f {prev,next}.local.occupied
-# Notification
-super + z
+
+# File manager
+super + shift + z
 	thunar open
 
-# Wallpaper
+# Wallpaper (random pick)
 super + backslash
-	~/.config/scripts/wallpaper/random_wallpaper.sh
+	~/.config/bspwm/exec/wallpaper/random_wallpaper.sh
+
+# Clipboard
+super + v
+	copyq show
 
 # Keyboard broken, workaround to press broken keys :/
 #XF86Launch1
